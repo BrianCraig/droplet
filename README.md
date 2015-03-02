@@ -7,73 +7,105 @@ agregar la clave ssh pública de la máquina de desarrollo
 
 conectar via ssh  
 
-> git clone https://github.com/BrianCraig/droplet.git
-> cd droplet
-> pip install -r requirements/prod.txt
+> git clone https://github.com/BrianCraig/droplet.git  
+> cd droplet  
+> pip install -r requirements/prod.txt  
 
 
 
 archivo droplet en /etc/init.d/
 
-	SCRIPT="python /home/droplet/manage.py runserver"
-	 
-	PIDFILE=/var/run/droplet.pid
-	LOGFILE=/var/log/droplet.log
-	 
-	start() {
-	if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
-	echo 'Service already running' >&2
-	return 1
-	fi
-	echo 'Starting service…' >&2
-	local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
-	su -c "$CMD" $RUNAS > "$PIDFILE"
-	echo 'Service started' >&2
+	#!/bin/sh
+	### BEGIN INIT INFO
+	# Provides: droplet
+	# Required-Start: $remote_fs $syslog
+	# Required-Stop: $remote_fs $syslog
+	# Default-Start: 2 3 4 5
+	# Default-Stop: 0 1 6
+	# Short-Description: Start daemon at boot time
+	# Description: Enable service provided by daemon.
+	### END INIT INFO
+	dir="/home/droplet"
+	user="root"
+	cmd="python manage.py runserver 0.0.0.0:80"
+	name=`basename $0`
+	pid_file="/var/run/$name.pid"
+	stdout_log="/var/log/$name.log"
+	stderr_log="/var/log/$name.err"
+	get_pid() {
+	cat "$pid_file"
 	}
-	 
-	stop() {
-	if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-	echo 'Service not running' >&2
-	return 1
-	fi
-	echo 'Stopping service…' >&2
-	kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
-	echo 'Service stopped' >&2
+	is_running() {
+	[ -f "$pid_file" ] && ps `get_pid` > /dev/null 2>&1
 	}
-	 
-	uninstall() {
-	echo -n "Are you really sure you want to uninstall this service? That cannot be undone. [yes|No] "
-	local SURE
-	read SURE
-	if [ "$SURE" = "yes" ]; then
-	stop
-	rm -f "$PIDFILE"
-	echo "Notice: log file is not be removed: '$LOGFILE'" >&2
-	update-rc.d -f droplet remove
-	rm -fv "$0"
-	fi
-	}
-	 
 	case "$1" in
 	start)
-	start
+	if is_running; then
+	echo "Already started"
+	else
+	echo "Starting $name"
+	cd "$dir"
+	sudo -u "$user" $cmd >> "$stdout_log" 2>> "$stderr_log" &
+	echo $! > "$pid_file"
+	if ! is_running; then
+	echo "Unable to start, see $stdout_log and $stderr_log"
+	exit 1
+	fi
+	fi
 	;;
 	stop)
-	stop
-	;;
-	uninstall)
-	uninstall
+	if is_running; then
+	echo -n "Stopping $name.."
+	kill `get_pid`
+	for i in {1..10}
+	do
+	if ! is_running; then
+	break
+	fi
+	echo -n "."
+	sleep 1
+	done
+	echo
+	if is_running; then
+	echo "Not stopped; may still be shutting down or shutdown may have failed"
+	exit 1
+	else
+	echo "Stopped"
+	if [ -f "$pid_file" ]; then
+	rm "$pid_file"
+	fi
+	fi
+	else
+	echo "Not running"
+	fi
 	;;
 	restart)
-	stop
-	start
+	$0 stop
+	if is_running; then
+	echo "Unable to stop, will not attempt to start"
+	exit 1
+	fi
+	$0 start
+	;;
+	status)
+	if is_running; then
+	echo "Running"
+	else
+	echo "Stopped"
+	exit 1
+	fi
 	;;
 	*)
-	echo "Usage: $0 {start|stop|restart|uninstall}"
-	esac 
+	echo "Usage: $0 {start|stop|restart|status}"
+	exit 1
+	;;
+	esac
+	exit 0
 
-> chmod +x /etc/init.d/droplet.sh
-> update-rc.d droplet defaults
+> chmod +x /etc/init.d/droplet.sh  
+> update-rc.d droplet.sh defaults
+
+> /etc/init.d/droplet.sh stop  
 
 instalacion en el desarrollo  
 -------------  
