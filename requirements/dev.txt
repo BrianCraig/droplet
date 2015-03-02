@@ -1,0 +1,3 @@
+-r common.txt
+Fabric==1.10
+ssh://git@git.devartis.com/fabric_bricks@288f0a09bda1e867cff0f62acb6a8fe819b18a7b#egg=fabric_bricks-dev
