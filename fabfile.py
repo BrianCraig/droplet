@@ -4,11 +4,11 @@ from fabric.api import run, cd, local
 # example use: $fab -H droplet start
 
 def start():
-    run('/etc/init.d/droplet.sh start')
+    run('supervisorctl start all')
 
 
 def stop():
-    run('/etc/init.d/droplet.sh stop')
+    run('supervisorctl stop all')
 
 
 def update_local():
