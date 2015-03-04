@@ -107,7 +107,7 @@ archivo droplet en /etc/init.d/
 
 > /etc/init.d/droplet.sh stop  
 
-instalacion en el desarrollo  
+instalación en el desarrollo  
 -------------  
 
 
