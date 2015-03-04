@@ -14,6 +14,7 @@ def stop():
 def update_local():
     local('git add -u')
     local('git commit -m "automatic commit"')
+    local('git push origin master')
 
 
 def pull():
