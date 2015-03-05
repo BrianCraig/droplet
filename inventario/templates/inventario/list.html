@@ -1,0 +1,13 @@
+{% extends 'inventario/base.html' %}
+{% block titulo %}Item{% endblock %}
+{% block general %}
+{% for item in lista %}
+<p>{{item.titulo}}</p>
+<p>{{item.descripcion}}</p>
+<p>Stock: {{item.stock}}</p>
+<p>Stock minimo: {{item.stock_warn}}</p>
+<p>Vistas: {{item.vistas}}</p>
+<p>Rank: {{item.rank}}</p>
+{% endfor %}
+{{cantidad}}
+{% endblock %}

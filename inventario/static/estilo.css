@@ -1,0 +1,44 @@
+.header{
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom:10px;
+}
+.header h3{
+    padding-top:10px   
+}
+
+.general {
+
+}
+
+.form, .publicar, .publicacion{
+  border: 1px solid #eee;
+  padding:10px;
+  overflow:hidden;
+}
+.form h3{
+  margin-top:0px; 
+}
+.publicar{
+  margin-bottom:10px 
+}
+.publicar button{
+   margin-top:10px
+}
+
+.publicacion{
+  border: 2px solid rgb(71, 148, 177);
+  margin-bottom:10px;
+}
+
+.publicacion .usuario{
+    font-size:1.2em;
+   margin:0;
+}
+.publicacion .contenido{
+   margin:0;
+}
+.publicacion .fecha{
+  font-size:0.8em;
+     margin:0;
+}

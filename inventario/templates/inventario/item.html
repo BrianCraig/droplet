@@ -1,0 +1,9 @@
+{% extends 'inventario/base.html' %}
+{% block titulo %}Item{% endblock %}
+{% block general %}
+<form method="POST" action="">
+{% csrf_token %}
+{{form}}
+    <input type="submit" />
+    </form>
+{% endblock %}

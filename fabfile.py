@@ -26,4 +26,9 @@ def deploy():
     update_local()
     stop()
     pull()
+    migrate()
     start()
+
+def migrate():
+    with cd('/home/droplet'):
+        run('python manage.py migrate --settings=droplet.settings.production')
