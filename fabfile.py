@@ -9,7 +9,7 @@ def start():
 
 def stop():
     run('supervisorctl stop all')
-    run('killall droplet') # asegurarse de cerrar el proceso
+    run('killall python') # asegurarse de cerrar el proceso
 
 
 def update_local():
